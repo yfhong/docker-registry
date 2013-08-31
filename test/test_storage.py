@@ -1,7 +1,11 @@
 
 from cStringIO import StringIO
 
+import boto
+import moto
+
 import base
+import config
 import storage
 
 
@@ -56,5 +60,15 @@ class TestLocalStorage(base.TestCase):
 
 class TestS3Storage(TestLocalStorage):
 
+    def __init__(self, *args, **kwargs):
+        super(TestS3Storage, self).__init__(*args, **kwargs)
+        # Mock s3 calls
+        mock_s3 = moto.mock_s3()
+        mock_s3.start()
+        cfg = config.load()
+        conn = boto.connect_s3()
+        conn.create_bucket(cfg.s3_bucket)
+
     def setUp(self):
+        # Override storage type
         self._storage = storage.load('s3')

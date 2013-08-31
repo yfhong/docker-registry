@@ -1,0 +1,8 @@
+test:
+    loglevel: info
+    storage: local
+    storage_path: /tmp/test
+    secret_key: foobar42
+    s3_access_key: foo
+    s3_secret_key: bar
+    s3_bucket: foobar

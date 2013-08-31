@@ -8,11 +8,14 @@ import hashlib
 import unittest
 from cStringIO import StringIO
 
+# Override sys path
 root_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 sys.path.append(root_path)
 sys.path.append(os.path.join(root_path, 'lib'))
 
+# Set env for config
 os.environ['SETTINGS_FLAVOR'] = 'test'
+os.environ['DOCKER_REGISTRY_CONFIG'] = 'config_test.yml'
 
 import registry
 

@@ -12,9 +12,9 @@ from sqlalchemy import Column, Integer, String
 Base = declarative_base()
 Error = SQLAlchemyError
 
-options = {"echo": True}
+options = {'echo': True}
 url = 'sqlite:///{0}'.format(
-    os.path.join(os.path.dirname(__file__), "database.db")
+    os.path.join(os.path.dirname(__file__), 'database.db')
 )
 
 # if 'DOTCLOUD_PROJECT' in os.environ:
@@ -51,10 +51,10 @@ class HelperBase(object):
         return json.dumps(self.to_dict(), *args, **kwargs)
 
     def __repr__(self):
-        return "<{0}({1})>".format(
+        return '<{0}({1})>'.format(
             self.__class__.__name__,
-            ", ".join([
-                "{0}={1}".format(k, v) for k, v in self.to_dict().iteritems()
+            ', '.join([
+                '{0}={1}'.format(k, v) for k, v in self.to_dict().iteritems()
             ])
         )
 
@@ -68,8 +68,8 @@ class Repository(Base, HelperBase):
 class Tag(Base, HelperBase):
     __tablename__ = 'tags'
     __table_args__ = (
-        UniqueConstraint("name", "repo_id"),
+        UniqueConstraint('name', 'repo_id'),
     )
     id = Column(Integer, primary_key=True)
     name = Column(String(256), nullable=False)
-    repo_id = Column(Integer, ForeignKey("repositories.id"))
+    repo_id = Column(Integer, ForeignKey('repositories.id'))

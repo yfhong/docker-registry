@@ -41,7 +41,6 @@ session = scoped_session(sessionmaker(
 
 Error = SQLAlchemyError
 
-
 class HelperBase(object):
     def to_dict(self):
         res = {}

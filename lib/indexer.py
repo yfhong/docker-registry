@@ -17,6 +17,6 @@ def add_tag(name, repository_name):
 
 
 def clear_index():
-    models.session.execute(models.Repository.delete())
-    models.session.execute(models.Tag.delete())
+    models.session.query(models.Repository).delete()
+    models.session.query(models.Tag).delete()
     models.session.commit()

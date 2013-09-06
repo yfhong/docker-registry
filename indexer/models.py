@@ -4,8 +4,6 @@ import datetime
 import json
 import os
 
-from rfc3339 import rfc3339
-
 from sqlalchemy import create_engine, ForeignKey, UniqueConstraint
 from sqlalchemy.orm import sessionmaker, scoped_session
 from sqlalchemy.exc import SQLAlchemyError
@@ -47,8 +45,6 @@ class HelperBase(object):
         res = {}
         for column in self.__table__.columns:
             value = getattr(self, column.name)
-            if isinstance(value, (datetime.datetime, datetime.date)):
-                value = rfc3339(value)
             res[column.name] = value
         return res
 

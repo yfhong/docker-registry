@@ -1,19 +1,19 @@
-from ..indexer import session, Repository, Tag # FIXME probably doesnt work
+import models
 
 def add_repository(name):
-	obj = Repository(name=name)
-	session.add(obj)
-	session.commit()
+	obj = models.Repository(name=name)
+	models.session.add(obj)
+	models.session.commit()
 
 def add_tag(name, repository_name):
-	repo = session.query(Repository, Repository.id).
-			filter(Repository.name==repository_name).
+	repo = models.session.query(models.Repository, models.Repository.id).
+			filter(models.Repository.name==repository_name).
 			one()
-	obj = Tag(name=name, repo_id=repo.id)
-	session.add(obj)
-	session.commit()
+	obj = models.Tag(name=name, repo_id=repo.id)
+	models.session.add(obj)
+	models.session.commit()
 
 def clear_index():
-    session.execute(Repository.delete())
-    session.execute(Tag.delete())
-    session.commit()
+    models.session.execute(models.Repository.delete())
+    models.session.execute(models.Tag.delete())
+    models.session.commit()

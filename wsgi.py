@@ -7,6 +7,7 @@ import sys
 
 root_path = os.path.abspath(os.path.dirname(__file__))
 sys.path.append(os.path.join(root_path, 'lib'))
+sys.path.append(os.path.join(root_path, 'indexer'))
 
 import registry
 

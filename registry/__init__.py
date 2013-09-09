@@ -14,4 +14,4 @@ if cfg.standalone is not False:
     from .index import *
 
 if cfg.indexer_enabled is not False:
-	from .indexermodule import *
+	from .indexer import *

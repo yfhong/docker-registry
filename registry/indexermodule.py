@@ -24,7 +24,7 @@ def subscribe():
 
 @app.route('/v1/indexer/<path:repository>/tags',
            methods=['GET'])
-def get_tags(repository):
+def get_indexed_tags(repository):
     lst = indexer.list_tags(repository)
     for i in xrange(len(lst)):
         lst[i] = lst[i].to_dict()
@@ -33,7 +33,7 @@ def get_tags(repository):
 
 @app.route('/v1/indexer/repositories',
            methods=['GET'])
-def get_repositories():
+def get_indexed_repositories():
     lst = indexer.list_repositories()
     for i in xrange(len(lst)):
         lst[i] = lst[i].to_dict()

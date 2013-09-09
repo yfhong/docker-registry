@@ -1,3 +1,9 @@
+import os
+import sys
+
+root_path = os.path.abspath(os.path.dirname(__file__))
+sys.path.append(os.path.join(root_path, '..', 'indexer_module'))
+
 import models
 
 
@@ -43,9 +49,12 @@ def list_repositories():
 
 
 def list_tags(repo_name):
-    repo = models.session.query(models.Repository, models.Repository.id).\
-        filter(models.Repository.name == repo_name).\
-        one()
+    try:
+        repo = models.session.query(models.Repository, models.Repository.id).\
+            filter(models.Repository.name == repo_name).\
+            one()
+    except Exception:
+        return []
     return models.session.query(models.Tag).\
         filter(models.Tag.repo_id == repo.id).\
         all()

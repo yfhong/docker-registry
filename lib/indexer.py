@@ -16,6 +16,41 @@ def add_tag(name, repository_name):
     models.session.commit()
 
 
+def has_repository(name):
+    return models.session.query(models.Repository, models.Repository.id).\
+        filter(models.Repository.name == name).\
+        count() > 0
+
+
+def get_tag(name, repository_name):
+    repo = models.session.query(models.Repository, models.Repository.id).\
+        filter(models.Repository.name == repository_name).\
+        one()
+    tag = models.sessions.query(models.Tag).\
+        filter(models.Tag.repo_id == repo.id).\
+        filter(models.Tag.name == name).\
+        one()
+    return tag
+
+
+def remove_tag(id):
+    models.session.query(models.Tag).filter(models.Tag.id == id).delete()
+    models.session.commit()
+
+
+def list_repositories():
+    return models.session.query(models.Repository).all()
+
+
+def list_tags(repo_name):
+    repo = models.session.query(models.Repository, models.Repository.id).\
+        filter(models.Repository.name == repo_name).\
+        one()
+    return models.session.query(models.Tag).\
+        filter(models.Tag.repo_id == repo.id).\
+        all()
+
+
 def clear_index():
     models.session.query(models.Repository).delete()
     models.session.query(models.Tag).delete()

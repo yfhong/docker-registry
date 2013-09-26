@@ -76,7 +76,9 @@ class S3Storage(Storage):
 
     def stream_read(self, path):
         if self._storage_cdn:
-            return self._stream_from_cdn(path)
+            for buf in self._stream_from_cdn(path):
+                yield buf
+            return
         path = self._init_path(path)
         key = boto.s3.key.Key(self._s3_bucket, path)
         if not key.exists():

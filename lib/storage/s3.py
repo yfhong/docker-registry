@@ -4,6 +4,7 @@ import os
 
 import boto.s3.connection
 import boto.s3.key
+import requests
 
 import cache
 
@@ -20,6 +21,7 @@ class S3Storage(Storage):
                                             is_secure=False)
         self._s3_bucket = self._s3_conn.get_bucket(self._config.s3_bucket)
         self._root_path = self._config.storage_path
+        self._storage_cdn = self._config.storage_cdn
 
     def _debug_key(self, key):
         """Used for debugging only."""
@@ -33,14 +35,23 @@ class S3Storage(Storage):
             return orig_meth(*args, **kwargs)
         key.bucket.connection.make_request = new_meth
 
-    def _init_path(self, path=None):
+    def _init_path(self, path=None, cdn=False):
+        if cdn and self._storage_cdn:
+            return os.path.join(self._storage_cdn, path)
         path = os.path.join(self._root_path, path) if path else self._root_path
         if path and path[0] == '/':
             return path[1:]
         return path
 
+    def _get_from_cdn(self, path):
+        path = self._init_path(path, True)
+        res = requests.get(path)
+        return res.text
+
     @cache.get
     def get_content(self, path):
+        if self._storage_cdn:
+            return self._get_from_cdn(path)
         path = self._init_path(path)
         key = boto.s3.key.Key(self._s3_bucket, path)
         if not key.exists():
@@ -54,7 +65,18 @@ class S3Storage(Storage):
         key.set_contents_from_string(content)
         return path
 
+    def _stream_from_cdn(self, path):
+        path = self._init_path(path, True)
+        res = requests.get(path, stream=True)
+        while True:
+            buf = res.iter_content(self.buffer_size)
+            if not buf:
+                break
+            yield buf
+
     def stream_read(self, path):
+        if self._storage_cdn:
+            return self._stream_from_cdn(path)
         path = self._init_path(path)
         key = boto.s3.key.Key(self._s3_bucket, path)
         if not key.exists():

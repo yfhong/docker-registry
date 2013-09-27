@@ -46,12 +46,18 @@ class S3Storage(Storage):
     def _get_from_cdn(self, path):
         path = self._init_path(path, True)
         res = requests.get(path)
+        if res.status_code >= 400:
+            raise IOError('Error fetching {0} from CDN,'
+                          ' status {1}'.format(path, res.status_code))
         return res.text
 
     @cache.get
     def get_content(self, path):
         if self._storage_cdn:
-            return self._get_from_cdn(path)
+            try:
+                return self._get_from_cdn(path)
+            except IOError:  # unavailable on CDN, try contacting S3 directly
+                pass
         path = self._init_path(path)
         key = boto.s3.key.Key(self._s3_bucket, path)
         if not key.exists():
@@ -68,17 +74,22 @@ class S3Storage(Storage):
     def _stream_from_cdn(self, path):
         path = self._init_path(path, True)
         res = requests.get(path, stream=True)
-        while True:
-            buf = res.iter_content(self.buffer_size)
+        if res.status_code >= 400:
+            raise IOError('Error fetching {0} from CDN,'
+                          ' status {1}'.format(path, res.status_code))
+        for buf in res.iter_content(self.buffer_size):
             if not buf:
                 break
             yield buf
 
     def stream_read(self, path):
         if self._storage_cdn:
-            for buf in self._stream_from_cdn(path):
-                yield buf
-            return
+            try:
+                for buf in self._stream_from_cdn(path):
+                    yield buf
+                return
+            except IOError:  # unavailable on CDN, try contacting S3 directly
+                pass
         path = self._init_path(path)
         key = boto.s3.key.Key(self._s3_bucket, path)
         if not key.exists():

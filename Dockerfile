@@ -6,7 +6,7 @@ ADD . /srv/docker-registry
 ADD ./config/boto.cfg /etc/boto.cfg
 
 RUN cd /srv/docker-registry && pip install -r requirements.txt
-RUN cp --no-clobber /srv/docker-registry/config/config_sample.yml /srv/docker-registry/config/config.yml
+RUN cp --no-clobber /srv/docker-registry/config/config_netease.yml /srv/docker-registry/config/config.yml
 
 EXPOSE 5000
 

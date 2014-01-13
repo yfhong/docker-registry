@@ -1,0 +1,52 @@
+# The `common' part is automatically included (and possibly overriden by all
+# other flavors)
+common:
+    # Set a random string here
+    secret_key: REPLACEME
+
+
+# This is the default configuration when no flavor is specified
+dev:
+    storage: local
+    storage_path: /tmp/registry
+    loglevel: debug
+
+# To specify another flavor, set the environment variable SETTINGS_FLAVOR
+# $ export SETTINGS_FLAVOR=prod
+prod:
+    loglevel: warn
+    storage: local
+    storage_path: "_env:STORAGE_PATH:/prod"
+    # Enabling these options makes the Registry send an email on each code Exception
+    email_exceptions:
+        smtp_host: "_env:SMTP_HOST"
+        smtp_port: 25
+        smtp_login: REPLACEME
+        smtp_password: REPLACEME
+        smtp_secure: false
+        from_addr: "_env:FROM_ADDR"
+        to_addr: "_env:TO_ADDR"
+
+# This flavor is automatically used by unit tests
+test:
+    storage: local
+    storage_path: /tmp/test
+
+# This flavor is for storing images in Openstack Swift
+swift:
+    storage: swift
+    storage_path: /registry
+    swift_authurl: REPLACEME
+    swift_container: REPLACEME
+    swift_user: REPLACEME
+    swift_password: REPLACEME
+    swift_tenant_name: REPLACEME
+    swift_region_name: REPLACEME
+
+# This flavor stores the images in Glance (to integrate with openstack)
+# See also: https://github.com/dotcloud/openstack-docker
+openstack:
+    storage: glance
+    storage_alternate: local
+    storage_path: /tmp/registry
+    loglevel: debug
